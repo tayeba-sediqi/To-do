@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>To Do List</title>
+
+<style>
+
+body{
+font-family:Arial;
+background-image:url("green.jpg");
+background-size:100% auto;
+background-position:center;
+background-repeat:repeat-y;
+
+display:flex;
+justify-content:center;
+align-items:flex-start;
+
+min-height:100vh;
+margin:0;
+padding-top:80px;
+}
+
+.container{
+background:rgba(39, 38, 38, 0.9);
+padding:40px;
+width:420px;
+max-width:90%;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.6);
+
+color:white;
+backdrop-filter:blur(5px);
+}
+
+h1{
+text-align:center;
+margin-bottom:10px;
+color:#ffffff;
+}
+
+#datetime{
+text-align:center;
+margin-bottom:20px;
+color:#ccc;
+}
+
+.inputBox{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:6px;
+border:none;
+background:#2b2b2b;
+color:white;
+}
+
+input::placeholder{
+color:#aaa;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.addBtn{
+background:#22c55e;
+color:white;
+}
+
+.addBtn:hover{
+background:#16a34a;
+}
+
+ul{
+list-style:none;
+padding:0;
+}
+
+li{
+margin-bottom:14px;
+}
+
+.taskRow{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.taskText{
+flex:1;
+word-break:break-word;
+color:#eee;
+}
+
+.completed{
+text-decoration:line-through;
+color:#888;
+}
+
+.deleteBtn{
+background:#ef4444;
+color:white;
+padding:5px 10px;
+}
+
+.deleteBtn:hover{
+background:#dc2626;
+}
+
+.number{
+font-weight:bold;
+color:#aaa;
+}
+
+.doneTime{
+font-size:12px;
+color:#aaa;
+margin-left:40px;
+margin-top:4px;
+}
+#footer{
+    margin-top: 50px;
+    font-size: 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>To-Do List</h1>
+
+<div id="datetime"></div>
+
+<div class="inputBox">
+<input id="taskInput" placeholder="Add a new task">
+<button class="addBtn">Add</button>
+</div>
+
+<ul id="taskList"></ul>
+<p id="footer">Design & Developed by Tayeba Sediqi</p>
+
+</div>
+<script>
+
+const taskInput=document.getElementById("taskInput");
+const taskList=document.getElementById("taskList");
+
+let tasks=[];
+
+function updateDateTime(){
+
+const now=new Date();
+
+const date=now.toLocaleDateString("en-US");
+const time=now.toLocaleTimeString("en-US");
+
+document.getElementById("datetime").innerHTML=date+" | "+time;
+
+}
+
+setInterval(updateDateTime,1000);
+updateDateTime();
+
+let add = document.querySelector(".addBtn");
+
+
+ add.onclick = function addTask(){
+
+let text=taskInput.value.trim();
+
+if(text==="") return;
+
+tasks.push({
+text:text,
+done:false,
+completedTime:""
+});
+
+taskInput.value="";
+
+renderTasks();
+
+}
+
+
+function renderTasks(){
+
+taskList.innerHTML="";
+
+tasks.forEach((task,index)=>{
+
+let li=document.createElement("li");
+
+let row=document.createElement("div");
+row.className="taskRow";
+
+
+let number=document.createElement("span");
+number.className="number";
+number.innerText=(index+1)+".";
+
+
+let checkbox=document.createElement("input");
+checkbox.type="checkbox";
+checkbox.checked=task.done;
+
+checkbox.onclick=function(){
+
+tasks[index].done=checkbox.checked;
+
+if(checkbox.checked){
+
+let now=new Date();
+
+tasks[index].completedTime=
+now.toLocaleDateString("en-US")+" "+
+now.toLocaleTimeString("en-US");
+
+}else{
+
+tasks[index].completedTime="";
+
+}
+
+renderTasks();
+
+}
+
+
+let span=document.createElement("span");
+span.className="taskText";
+span.innerText=task.text;
+
+if(task.done){
+span.classList.add("completed");
+}
+
+
+let del=document.createElement("button");
+del.innerText="Delete";
+del.className="deleteBtn";
+
+del.onclick=function(){
+tasks.splice(index,1);
+renderTasks();
+}
+
+
+row.appendChild(number);
+row.appendChild(checkbox);
+row.appendChild(span);
+row.appendChild(del);
+
+li.appendChild(row);
+
+
+if(task.completedTime!==""){
+
+let time=document.createElement("div");
+time.className="doneTime";
+time.innerText="Completed: "+task.completedTime;
+
+li.appendChild(time);
+
+}
+
+taskList.appendChild(li);
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
